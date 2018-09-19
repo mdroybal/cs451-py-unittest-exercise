@@ -11,35 +11,42 @@ class GeoLocWrapper:
     https://geopy.readthedocs.io/en/stable/    
     """
 
-    def __init__(self, addr_str=''):
+    def __init__(self, addr_str='',dest_addr_str=''):
         """Create a new GeoLocWrapper object that creates a connection to 
         Nominatum geo web service and initializes a geopy location object from
         an address string.
 
         Consider: What happens if the geolocator cannot locate geographic 
         location from addr_str? Raise a GeopyError exception!
-        """
-        self.geolocator = Nominatim(user_agent="test-application")     
+        """        
+        self.geolocator = Nominatim(user_agent="test-application") 
         self.location = self.geolocator.geocode(addr_str)
+        self.locB = self.geolocator.geocode(dest_addr_str)
+
+        if self.location == None:        
+            raise GeopyError
+
+
+        self.coordinates = (self.location.latitude,self.location.longitude)
+
+        self.coorB = (self.locB.latitude,self.locB.longitude)
         
-    def get_distance_miles(self, dest_addr_str=None):
+    def get_distance_miles(self):
         """Returns the geodisic distance in miles from location and 
         dest_addr_str.
-        
+
         Consider: What happens if the geolocator cannot locate geographic 
         location from dest_addr_str?
         """
-        pass
+        return (distance(self.coordinates,self.coorB).miles)
 
-    def get_distance_kilometers(self, dest_addr_str=None):
+
+    def get_distance_kilometers(self):
         """Returns the geodisic distance in kilometers from location and 
         dest_addr_str.
         
         Consider: What happens if the geolocator cannot locate geographic 
         location from dest_addr_str?
         """
-        pass
-
-
-
+        return (distance(self.coordinates,self.coorB).km)
 
